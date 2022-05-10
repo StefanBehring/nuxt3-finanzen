@@ -12,6 +12,8 @@
 </template>
 
 <script setup lang="ts">
+import { Ref } from "vue";
+
 const props = defineProps({
   id: {
     type: String,
@@ -34,9 +36,9 @@ const props = defineProps({
 
 const emit = defineEmits(["update:content"]);
 
-const value = ref(props.content);
+const value: Ref<string> = ref(props.content);
 
-const handleInput = (event: Event) => {
+const handleInput = (event: Event): void => {
   const target = event.target as HTMLInputElement;
   value.value = target.value;
   emit("update:content", target.value);
