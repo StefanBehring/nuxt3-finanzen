@@ -4,7 +4,7 @@
       <h3>Übersicht</h3>
       <div class="card-toolbox">
         <NuxtLink to="/aktien/neu" class="btn btn-primary">Aktie anlegen</NuxtLink>
-        <NuxtLink to="/" class="btn btn-primary">Kauf</NuxtLink>
+        <NuxtLink to="/aktien/kaufen" class="btn btn-primary">Kauf</NuxtLink>
         <NuxtLink to="/" class="btn btn-primary">Verkauf</NuxtLink>
       </div>
     </div>
