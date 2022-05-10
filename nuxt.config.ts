@@ -8,7 +8,6 @@ export default defineNuxtConfig({
   app: {
     head: {
       link: [
-        // <link rel="stylesheet" href="https://myawesome-lib.css">
         {
           rel: 'stylesheet',
           href: 'https://fonts.googleapis.com/css2?family=Lato&display=swap',
