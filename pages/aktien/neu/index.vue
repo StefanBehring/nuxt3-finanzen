@@ -32,7 +32,7 @@ import saveToLocal from "~~/lib/saveToLocal";
 
 import InputText from "~~/components/inputs/InputText.vue";
 
-import { ComputedRef, Ref } from "@vue/reactivity";
+import { ComputedRef, Ref } from "vue";
 import Aktie from "~~/types/Aktie";
 
 import { useUnternehmen } from "~~/composables/felder/useUnternehmen";
