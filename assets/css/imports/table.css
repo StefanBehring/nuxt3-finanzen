@@ -1,0 +1,38 @@
+table {
+  caption-side: bottom;
+  border-collapse: collapse;
+}
+
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.table > :not(:first-child) {
+  border-top: 2px solid var(--black);
+}
+
+th {
+  padding: 0.5rem 0.25rem;
+  text-align: left;
+}
+
+th:last-of-type {
+  text-align: right;
+}
+
+tbody tr:nth-child(even) {
+  background-color: var(--gray-200);
+}
+
+tbody tr:hover {
+  background-color: var(--gray-300);
+}
+
+td {
+  padding: 0.5rem 0.25rem;
+}
+
+td:last-of-type {
+  text-align: right;
+}

@@ -1,0 +1,18 @@
+@import './imports/reset.css';
+@import './imports/root.css';
+@import './imports/nav.css';
+@import './imports/card.css';
+@import './imports/button.css';
+@import './imports/table.css';
+@import './imports/form.css';
+@import './imports/input.css';
+
+body {
+  font-family: var(--font-lato);
+  font-size: 18px;
+  background-color: var(--page-bg);
+}
+
+a {
+  text-decoration: none;
+}

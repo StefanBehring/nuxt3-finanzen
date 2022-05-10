@@ -1,0 +1,65 @@
+nav {
+  display: grid;
+  grid-template-rows: 5rem calc(100vh - 10rem) 5rem;
+  height: 100vh;
+  background-color: var(--nav-bg);
+}
+
+.nav-logo {
+  display: flex;
+  justify-content: center;
+  color: var(--gray-200);
+}
+
+.nav-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 1rem;
+  font-size: 0.8rem;
+  color: var(--gray-600);
+}
+
+.nav-bottom p {
+  margin: 0;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: center;
+}
+
+.menu-item a {
+  background-color: var(--nav-bg);
+  border: none;
+  color: var(--nav-color);
+  flex: 0 0 100%;
+  font-size: 1.5rem;
+  line-height: 1.8rem;
+  padding: 0.3rem 0;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.2s ease-in, color 0.2s ease-in;
+}
+
+.menu-item a:hover {
+  background-color: var(--nav-bg-hover);
+  border-right: 3px solid var(--blue-400);
+  color: var(--nav-color-hover);
+  flex: 0 0 calc(100% - 3px);
+  padding-left: 3px;
+}
+
+.menu-item a.router-link-active {
+  background-color: var(--nav-bg-hover);
+  color: var(--nav-color-hover);
+  border-right: 3px solid var(--purple-400);
+  flex: 0 0 calc(100% - 3px);
+  padding-left: 3px;
+}
