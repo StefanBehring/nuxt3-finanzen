@@ -1,3 +1,4 @@
+import * as yup from 'yup'
 import InputNumberFeld from '~~/types/InputNumberFeld'
 
 export function usePreis() {
@@ -11,11 +12,40 @@ export function usePreis() {
     max: Infinity,
     value: NaN,
   }
-  const values = ref({
+  const values = reactive({
+    id: 'preis',
     value: NaN,
     hasError: false,
     errorMessage: '',
   })
 
-  return { feld, values }
+  const feldSchema = yup.object({
+    value: yup
+      .number()
+      .required(`${feld.label} is required`)
+      .min(0.01, `${feld.label} must be at least 0.01`),
+  })
+
+  const doValidate = () => {
+    feldSchema.isValid({ value: values.value }).then((isValid) => {
+      if (isValid) {
+        values.hasError = false
+        values.errorMessage = ''
+      } else {
+        feldSchema
+          .validate({ value: values.value }, { abortEarly: true })
+          .catch((error) => {
+            values.hasError = true
+            values.errorMessage = error.errors[0]
+          })
+      }
+    })
+  }
+
+  watch(
+    () => values.value,
+    () => doValidate()
+  )
+
+  return { feld, values, doValidate }
 }
