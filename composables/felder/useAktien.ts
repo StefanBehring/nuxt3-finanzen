@@ -24,7 +24,11 @@ export function useAktien() {
     options: options,
     value: '',
   }
-  const value = ref('')
+  const values = ref({
+    value: '',
+    hasError: false,
+    errorMessage: '',
+  })
 
-  return { feld, value }
+  return { feld, values }
 }

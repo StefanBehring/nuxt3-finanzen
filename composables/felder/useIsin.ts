@@ -7,7 +7,11 @@ export function useIsin() {
     placeholder: 'US09075V1026',
     value: '',
   }
-  const value = ref('')
+  const values = ref({
+    value: '',
+    hasError: false,
+    errorMessage: '',
+  })
 
-  return { feld, value }
+  return { feld, values }
 }

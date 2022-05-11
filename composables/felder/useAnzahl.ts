@@ -11,7 +11,11 @@ export function useAnzahl() {
     max: Infinity,
     value: NaN,
   }
-  const value = ref(NaN)
+  const values = ref({
+    value: NaN,
+    hasError: false,
+    errorMessage: '',
+  })
 
-  return { feld, value }
+  return { feld, values }
 }

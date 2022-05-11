@@ -51,6 +51,15 @@ const props = defineProps({
     required: false,
     default: NaN,
   },
+  hasError: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  errorMessage: {
+    type: String,
+    required: true,
+  },
 });
 
 const emit = defineEmits(["update:content"]);

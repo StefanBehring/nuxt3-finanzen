@@ -7,7 +7,11 @@ export function useWkn() {
     placeholder: 'A2PSR2',
     value: '',
   }
-  const value = ref('')
+  const values = ref({
+    value: '',
+    hasError: false,
+    errorMessage: '',
+  })
 
-  return { feld, value }
+  return { feld, values }
 }

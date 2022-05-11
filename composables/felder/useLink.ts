@@ -7,7 +7,11 @@ export function useLink() {
     placeholder: 'https://www.finanzen.net/aktien/biontech-aktie',
     value: '',
   }
-  const value = ref('')
+  const values = ref({
+    value: '',
+    hasError: false,
+    errorMessage: '',
+  })
 
-  return { feld, value }
+  return { feld, values }
 }
