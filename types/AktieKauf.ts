@@ -1,6 +1,6 @@
 type AktieKauf = {
   id: string
-  unternehmen_id: string
+  aktie_id: string
   anzahl: number
   preis: number
   datum: string
