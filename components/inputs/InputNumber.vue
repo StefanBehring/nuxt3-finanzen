@@ -5,12 +5,14 @@
       type="number"
       :name="id"
       :placeholder="placeholder"
+      :class="hasError ? 'input-danger' : ''"
       :step="step"
       :min="min"
       :max="max"
       :value="value"
       @input="handleInput"
     />
+    <p class="text-danger" v-show="hasError">{{ errorMessage }}</p>
   </div>
 </template>
 

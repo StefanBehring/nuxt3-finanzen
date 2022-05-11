@@ -4,6 +4,7 @@
     <select
       :name="name"
       :id="id"
+      :class="hasError ? 'input-danger' : ''"
       v-model="value"
       @change="handleChange"
       v-show="showOptions"
@@ -13,6 +14,7 @@
       </option>
     </select>
     <p v-show="!showOptions">Keine Optionen vorhanden</p>
+    <p class="text-danger" v-show="hasError">{{ errorMessage }}</p>
   </div>
 </template>
 

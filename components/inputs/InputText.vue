@@ -5,9 +5,11 @@
       type="text"
       :name="id"
       :placeholder="placeholder"
+      :class="hasError ? 'input-danger' : ''"
       :value="value"
       @input="handleInput"
     />
+    <p class="text-danger" v-show="hasError">{{ errorMessage }}</p>
   </div>
 </template>
 

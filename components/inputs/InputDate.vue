@@ -1,7 +1,14 @@
 <template>
   <div class="input-area">
     <label :for="id">{{ label }}</label>
-    <input type="date" :name="id" :value="value" @input="handleInput" />
+    <input
+      type="date"
+      :name="id"
+      :class="hasError ? 'input-danger' : ''"
+      :value="value"
+      @input="handleInput"
+    />
+    <p class="text-danger" v-show="hasError">{{ errorMessage }}</p>
   </div>
 </template>
 
