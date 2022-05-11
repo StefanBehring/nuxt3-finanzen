@@ -3,9 +3,13 @@
     <div class="card-header">
       <h3>Übersicht</h3>
       <div class="card-toolbox">
-        <NuxtLink to="/aktien/neu" class="btn btn-primary">Aktie anlegen</NuxtLink>
+        <NuxtLink to="/aktien/neu" class="btn btn-primary"
+          >Aktie anlegen</NuxtLink
+        >
         <NuxtLink to="/aktien/kaufen" class="btn btn-primary">Kauf</NuxtLink>
-        <NuxtLink to="/" class="btn btn-primary">Verkauf</NuxtLink>
+        <NuxtLink to="/aktien/verkaufen" class="btn btn-primary"
+          >Verkauf</NuxtLink
+        >
       </div>
     </div>
     <div class="card-body">
@@ -22,22 +26,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Allianz</td>
-            <td>3</td>
-            <td>200 &euro;</td>
-            <td>600 &euro;</td>
-            <td>ABC</td>
-            <td>DEF</td>
-            <td><NuxtLink to="/" class="btn btn-light">Details</NuxtLink></td>
-          </tr>
-          <tr>
-            <td>BMW</td>
-            <td>8</td>
-            <td>80 &euro;</td>
-            <td>640 &euro;</td>
-            <td>ABC</td>
-            <td>DEF</td>
+          <tr v-for="aktie of aktienBestand" :key="aktie.id">
+            <td>{{ aktie.unternehmen }}</td>
+            <td>{{ aktie.anzahl }}</td>
+            <td>{{ aktie.wert_avg }} &euro;</td>
+            <td>{{ aktie.wert_avg * aktie.anzahl }} &euro;</td>
+            <td>{{ aktie.wkn }}</td>
+            <td>{{ aktie.isin }}</td>
             <td><NuxtLink to="/" class="btn btn-light">Details</NuxtLink></td>
           </tr>
         </tbody>
@@ -47,8 +42,24 @@
 </template>
 
 <script setup lang="ts">
-// This will also work in `<script setup>`
+import loadFromLocal from '~~/lib/loadFromLocal'
+
+import { Ref } from 'vue'
+import AktieBestand from '~~/types/AktieBestand'
+
 definePageMeta({
-  layout: "custom",
-});
+  layout: 'custom',
+})
+
+const aktienBestand: Ref<AktieBestand[]> = ref([])
+
+onBeforeMount(() => {
+  let aktienBestandLocalStorage: AktieBestand[] | null =
+    loadFromLocal('aktien_bestand')
+  if (aktienBestandLocalStorage === null) {
+    aktienBestandLocalStorage = []
+  }
+
+  aktienBestand.value = aktienBestandLocalStorage
+})
 </script>
