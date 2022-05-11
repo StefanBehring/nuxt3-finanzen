@@ -59,7 +59,7 @@ const calcAktienBestand = (): void => {
     let wert = 0
 
     for (const transaktion of transaktionen.filter(
-      (t) => t.unternehmen_id === aktie.id
+      (t) => t.aktie_id === aktie.id
     )) {
       if (transaktion.is_kauf) {
         anzahl += transaktion.anzahl
