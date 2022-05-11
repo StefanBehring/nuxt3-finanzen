@@ -38,9 +38,7 @@
           />
         </div>
         <div class="form-actions">
-          <button type="submit" class="btn btn-primary" :disabled="disableButton">
-            Speichern
-          </button>
+          <button type="submit" class="btn btn-primary">Speichern</button>
         </div>
       </form>
     </div>
@@ -49,6 +47,7 @@
 
 <script setup lang="ts">
 import { v4 as uuidv4 } from "uuid";
+import * as yup from "yup";
 import loadFromLocal from "~~/lib/loadFromLocal";
 import saveToLocal from "~~/lib/saveToLocal";
 import calcAktienBestand from "~~/lib/calcAktienBestand";
@@ -64,7 +63,6 @@ import { useDatum } from "~~/composables/felder/useDatum";
 import { usePreis } from "~~/composables/felder/usePreis";
 import { useUhrzeit } from "~~/composables/felder/useUhrzeit";
 
-import { ComputedRef, Ref } from "vue";
 import AktieKauf from "~~/types/AktieKauf";
 import FeldValues from "~~/types/FeldValues";
 
@@ -73,51 +71,84 @@ definePageMeta({
 });
 
 /*
+  VALIDATION SCHEMA
+*/
+
+const formSchema = yup.object({
+  aktie_id: yup.string().required("aktie_id is required"),
+  anzahl: yup
+    .number()
+    .required("Anzahl is required")
+    .integer("Anzahl must be an integer")
+    .min(1, "Anzahl muss mindestens 1 sein"),
+  preis: yup
+    .number()
+    .required("Preis is required")
+    .min(0.01, "Preis muss mindestens 0.01 sein"),
+  datum: yup.string().required("Datum is required"),
+  uhrzeit: yup.string().required("Uhrzeit is required"),
+});
+
+/*
   FELDER
 */
-const allFields: Ref<FeldValues>[] = reactive([]);
+const allFields: FeldValues[] = reactive([]);
+const allValidations: (() => void)[] = reactive([]);
 
-const { feld: aktienFeld, values: aktie } = useAktien();
-allFields.push(aktie);
+const addField = (field: FeldValues, fieldValidate: () => void): void => {
+  allFields.push(field);
+  allValidations.push(fieldValidate);
+};
 
-const { feld: anzahlFeld, values: anzahl } = useAnzahl();
-allFields.push(anzahl);
+const { feld: aktienFeld, values: aktie, doValidate: aktieValidate } = useAktien();
+addField(aktie, aktieValidate);
 
-const { feld: datumFeld, values: datum } = useDatum();
-allFields.push(datum);
+const { feld: anzahlFeld, values: anzahl, doValidate: anzahlValidate } = useAnzahl();
+addField(anzahl, anzahlValidate);
 
-const { feld: preisFeld, values: preis } = usePreis();
-allFields.push(preis);
+const { feld: datumFeld, values: datum, doValidate: datumValidate } = useDatum();
+addField(datum, datumValidate);
 
-const { feld: uhrzeitFeld, values: uhrzeit } = useUhrzeit();
-allFields.push(uhrzeit);
+const { feld: preisFeld, values: preis, doValidate: preisValidate } = usePreis();
+addField(preis, preisValidate);
+
+const { feld: uhrzeitFeld, values: uhrzeit, doValidate: uhrzeitValidate } = useUhrzeit();
+addField(uhrzeit, uhrzeitValidate);
 
 /*
   SUBMIT
 */
-const disableButton: ComputedRef<boolean> = computed(() => {
-  for (const field of allFields) {
-    if (field.value.value === "") {
-      return true;
-    } else if (typeof field.value.value === "number") {
-      if (isNaN(field.value.value)) {
-        return true;
-      }
-    }
-  }
-  return false;
-});
 
-const handleSubmit = (e: Event): void => {
+const handleSubmit = async (e: Event): Promise<void> => {
   e.preventDefault();
 
+  for (const validate of allValidations) {
+    validate();
+  }
+
+  const formEntries = {
+    aktie_id: aktie.value,
+    anzahl: anzahl.value,
+    preis: preis.value,
+    datum: datum.value,
+    uhrzeit: uhrzeit.value,
+  };
+
+  const isValid = await formSchema.isValid(formEntries);
+
+  if (isValid) {
+    doSubmit();
+  }
+};
+
+const doSubmit = () => {
   const newAktie: AktieKauf = {
     id: uuidv4(),
-    unternehmen_id: aktie.value.value,
-    anzahl: anzahl.value.value,
-    preis: preis.value.value,
-    datum: datum.value.value,
-    uhrzeit: uhrzeit.value.value,
+    aktie_id: aktie.value,
+    anzahl: anzahl.value,
+    preis: preis.value,
+    datum: datum.value,
+    uhrzeit: uhrzeit.value,
     is_kauf: true,
   };
 

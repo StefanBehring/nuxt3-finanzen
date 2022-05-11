@@ -41,9 +41,7 @@
           <div></div>
         </div>
         <div class="form-actions">
-          <button type="submit" class="btn btn-primary" :disabled="disableButton">
-            Speichern
-          </button>
+          <button type="submit" class="btn btn-primary">Speichern</button>
         </div>
       </form>
     </div>
@@ -52,12 +50,12 @@
 
 <script setup lang="ts">
 import { v4 as uuidv4 } from "uuid";
+import * as yup from "yup";
 import loadFromLocal from "~~/lib/loadFromLocal";
 import saveToLocal from "~~/lib/saveToLocal";
 
 import InputText from "~~/components/inputs/InputText.vue";
 
-import { ComputedRef, Ref } from "vue";
 import Aktie from "~~/types/Aktie";
 import FeldValues from "~~/types/FeldValues";
 
@@ -72,46 +70,81 @@ definePageMeta({
 });
 
 /*
+  VALIDATION SCHEMA
+*/
+
+const formSchema = yup.object({
+  unternehmen: yup.string().required("Unternehmen is required"),
+  wkn: yup.string().required("WKN is required"),
+  isin: yup.string().required("ISIN is required"),
+  symbol: yup.string(),
+  link: yup.string().required("Link is required").url("Link must be an url"),
+});
+
+/*
   FIELDS
 */
-const allFields: Ref<FeldValues>[] = reactive([]);
+const allFields: FeldValues[] = reactive([]);
+const allValidations: (() => void)[] = reactive([]);
 
-const { feld: unternehmenFeld, values: unternehmen } = useUnternehmen();
-allFields.push(unternehmen);
+const addField = (field: FeldValues, fieldValidate: () => void): void => {
+  allFields.push(field);
+  allValidations.push(fieldValidate);
+};
 
-const { feld: wknFeld, values: wkn } = useWkn();
-allFields.push(wkn);
+const {
+  feld: unternehmenFeld,
+  values: unternehmen,
+  doValidate: unternehmenValidate,
+} = useUnternehmen();
+addField(unternehmen, unternehmenValidate);
 
-const { feld: isinFeld, values: isin } = useIsin();
-allFields.push(isin);
+const { feld: wknFeld, values: wkn, doValidate: wknValidate } = useWkn();
+addField(wkn, wknValidate);
 
-const { feld: symbolFeld, values: symbol } = useSymbol();
+const { feld: isinFeld, values: isin, doValidate: isinValidate } = useIsin();
+addField(isin, isinValidate);
 
-const { feld: linkFeld, values: link } = useLink();
-allFields.push(link);
+const { feld: symbolFeld, values: symbol, doValidate: symbolValidate } = useSymbol();
+addField(symbol, symbolValidate);
+
+const { feld: linkFeld, values: link, doValidate: linkValidate } = useLink();
+addField(link, linkValidate);
 
 /*
   SUBMIT
 */
-const disableButton: ComputedRef<boolean> = computed(() => {
-  for (const field of allFields) {
-    if (field.value.value === "") {
-      return true;
-    }
-  }
-  return false;
-});
 
-const handleSubmit = (e: Event): void => {
+const handleSubmit = async (e: Event): Promise<void> => {
   e.preventDefault();
 
+  for (const validate of allValidations) {
+    validate();
+  }
+
+  const formEntries = {
+    unternehmen: unternehmen.value,
+    wkn: wkn.value,
+    isin: isin.value,
+    symbol: symbol.value,
+    link: link.value,
+  };
+
+  const isValid = await formSchema.isValid(formEntries);
+
+  if (isValid) {
+    doSubmit();
+  }
+};
+
+const doSubmit = (): void => {
   const newAktie: Aktie = {
     id: uuidv4(),
-    unternehmen: unternehmen.value.value,
-    wkn: wkn.value.value,
-    isin: isin.value.value,
-    symbol: symbol.value.value,
-    link: link.value.value,
+    unternehmen: unternehmen.value,
+    wkn: wkn.value,
+    isin: isin.value,
+    symbol: symbol.value,
+    link: link.value,
   };
 
   let aktienLocalStorage: Aktie[] | null = loadFromLocal("aktien");
