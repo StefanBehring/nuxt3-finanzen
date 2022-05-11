@@ -5,6 +5,7 @@ type AktieKauf = {
   preis: number
   datum: string
   uhrzeit: string
+  is_kauf: boolean
 }
 
 export default AktieKauf
