@@ -60,7 +60,6 @@ const { feld: isinFeld, value: isin } = useIsin();
 allFields.push(isin);
 
 const { feld: symbolFeld, value: symbol } = useSymbol();
-allFields.push(symbol);
 
 const { feld: linkFeld, value: link } = useLink();
 allFields.push(link);
