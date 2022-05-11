@@ -26,6 +26,7 @@
 import { v4 as uuidv4 } from "uuid";
 import loadFromLocal from "~~/lib/loadFromLocal";
 import saveToLocal from "~~/lib/saveToLocal";
+import calcAktienBestand from "~~/lib/calcAktienBestand";
 
 import InputDate from "~~/components/inputs/InputDate.vue";
 import InputNumber from "~~/components/inputs/InputNumber.vue";
@@ -91,19 +92,17 @@ const handleSubmit = (e: Event): void => {
     preis: preis.value,
     datum: datum.value,
     uhrzeit: uhrzeit.value,
+    is_kauf: true,
   };
 
-  console.log("newAktie:");
-  for (const [key, value] of Object.entries(newAktie)) {
-    console.log(`${key}: ${value}`);
+  let aktienKaufLocalStorage: AktieKauf[] | null = loadFromLocal("aktien_kauf");
+  if (aktienKaufLocalStorage === null) {
+    aktienKaufLocalStorage = [];
   }
 
-  let aktienLocalStorage: AktieKauf[] | null = loadFromLocal("aktien_kauf");
-  if (aktienLocalStorage === null) {
-    aktienLocalStorage = [];
-  }
+  aktienKaufLocalStorage.push(newAktie);
+  saveToLocal("aktien_kauf", aktienKaufLocalStorage);
 
-  aktienLocalStorage.push(newAktie);
-  saveToLocal("aktien_kauf", aktienLocalStorage);
+  calcAktienBestand();
 };
 </script>
