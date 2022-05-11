@@ -1,4 +1,5 @@
 import * as yup from 'yup'
+import handleValidation from '~~/lib/handleValidation'
 import InputTextFeld from '~~/types/InputTextFeld'
 
 export function useLink() {
@@ -9,7 +10,6 @@ export function useLink() {
     value: '',
   }
   const values = reactive({
-    id: 'link',
     value: '',
     hasError: false,
     errorMessage: '',
@@ -22,25 +22,18 @@ export function useLink() {
       .url(`${feld.label} must be an url`),
   })
 
-  const doValidate = () => {
-    feldSchema.isValid({ value: values.value }).then((isValid) => {
-      if (isValid) {
-        values.hasError = false
-        values.errorMessage = ''
-      } else {
-        feldSchema
-          .validate({ value: values.value }, { abortEarly: true })
-          .catch((error) => {
-            values.hasError = true
-            values.errorMessage = error.errors[0]
-          })
-      }
-    })
+  const doValidate = async (): Promise<boolean> => {
+    const res = await handleValidation(feldSchema, { value: values.value })
+    values.hasError = res.hasError
+    values.errorMessage = res.errorMessage
+    return res.hasError
   }
 
   watch(
     () => values.value,
-    () => doValidate()
+    async () => {
+      await doValidate()
+    }
   )
 
   return { feld, values, doValidate }

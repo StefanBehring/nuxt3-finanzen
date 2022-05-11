@@ -1,4 +1,5 @@
 import * as yup from 'yup'
+import handleNumberValidation from '~~/lib/handleNumberValidation'
 import InputNumberFeld from '~~/types/InputNumberFeld'
 
 export function useAnzahl() {
@@ -13,7 +14,6 @@ export function useAnzahl() {
     value: NaN,
   }
   const values = reactive({
-    id: 'anzahl',
     value: NaN,
     hasError: false,
     errorMessage: '',
@@ -27,25 +27,20 @@ export function useAnzahl() {
       .min(1, `${feld.label} must be at least 1`),
   })
 
-  const doValidate = () => {
-    feldSchema.isValid({ value: values.value }).then((isValid) => {
-      if (isValid) {
-        values.hasError = false
-        values.errorMessage = ''
-      } else {
-        feldSchema
-          .validate({ value: values.value }, { abortEarly: true })
-          .catch((error) => {
-            values.hasError = true
-            values.errorMessage = error.errors[0]
-          })
-      }
+  const doValidate = async (): Promise<boolean> => {
+    const res = await handleNumberValidation(feldSchema, {
+      value: values.value,
     })
+    values.hasError = res.hasError
+    values.errorMessage = res.errorMessage
+    return res.hasError
   }
 
   watch(
     () => values.value,
-    () => doValidate()
+    async () => {
+      await doValidate()
+    }
   )
 
   return { feld, values, doValidate }
