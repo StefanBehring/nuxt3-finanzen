@@ -47,7 +47,6 @@
 
 <script setup lang="ts">
 import { v4 as uuidv4 } from "uuid";
-import * as yup from "yup";
 import loadFromLocal from "~~/lib/loadFromLocal";
 import saveToLocal from "~~/lib/saveToLocal";
 import calcAktienBestand from "~~/lib/calcAktienBestand";
@@ -71,31 +70,12 @@ definePageMeta({
 });
 
 /*
-  VALIDATION SCHEMA
-*/
-
-const formSchema = yup.object({
-  aktie_id: yup.string().required("aktie_id is required"),
-  anzahl: yup
-    .number()
-    .required("Anzahl is required")
-    .integer("Anzahl must be an integer")
-    .min(1, "Anzahl muss mindestens 1 sein"),
-  preis: yup
-    .number()
-    .required("Preis is required")
-    .min(0.01, "Preis muss mindestens 0.01 sein"),
-  datum: yup.string().required("Datum is required"),
-  uhrzeit: yup.string().required("Uhrzeit is required"),
-});
-
-/*
   FELDER
 */
 const allFields: FeldValues[] = reactive([]);
-const allValidations: (() => void)[] = reactive([]);
+const allValidations: (() => Promise<boolean>)[] = reactive([]);
 
-const addField = (field: FeldValues, fieldValidate: () => void): void => {
+const addField = (field: FeldValues, fieldValidate: () => Promise<boolean>): void => {
   allFields.push(field);
   allValidations.push(fieldValidate);
 };
@@ -122,19 +102,14 @@ addField(uhrzeit, uhrzeitValidate);
 const handleSubmit = async (e: Event): Promise<void> => {
   e.preventDefault();
 
+  let isValid = true;
+
   for (const validate of allValidations) {
-    validate();
+    let test = await validate();
+    if (test) {
+      isValid = !test;
+    }
   }
-
-  const formEntries = {
-    aktie_id: aktie.value,
-    anzahl: anzahl.value,
-    preis: preis.value,
-    datum: datum.value,
-    uhrzeit: uhrzeit.value,
-  };
-
-  const isValid = await formSchema.isValid(formEntries);
 
   if (isValid) {
     doSubmit();
