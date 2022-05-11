@@ -6,6 +6,7 @@
 @import './imports/table.css';
 @import './imports/form.css';
 @import './imports/input.css';
+@import './imports/text.css';
 
 body {
   font-family: var(--font-lato);
