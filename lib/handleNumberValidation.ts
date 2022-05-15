@@ -1,6 +1,7 @@
 import { RequiredNumberSchema } from 'yup/lib/number'
 import { OptionalObjectSchema, TypeOfShape } from 'yup/lib/object'
 import { AnyObject } from 'yup/lib/types'
+import ValidationError from '../types/Validation/ValidationError'
 
 const handleNumberValidation = async (
   feldSchema: OptionalObjectSchema<
@@ -13,7 +14,7 @@ const handleNumberValidation = async (
     }>
   >,
   feldEntry: { value: number }
-): Promise<{ hasError: boolean; errorMessage: string }> => {
+): Promise<ValidationError> => {
   const res = {
     hasError: false,
     errorMessage: '',
