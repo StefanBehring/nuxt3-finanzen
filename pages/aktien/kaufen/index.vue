@@ -12,7 +12,7 @@
             v-model:hasError="anzahl.hasError"
             v-model:errorMessage="anzahl.errorMessage"
           />
-          <InputNumber
+          <InputCurrency
             v-bind="preisFeld"
             v-model:content="preis.value"
             v-model:hasError="preis.hasError"
@@ -51,6 +51,7 @@ import loadFromLocal from "~~/lib/loadFromLocal";
 import saveToLocal from "~~/lib/saveToLocal";
 import calcAktienBestand from "~~/lib/calcAktienBestand";
 
+import InputCurrency from "../../../components/inputs/InputCurrency.vue";
 import InputDate from "~~/components/inputs/InputDate.vue";
 import InputNumber from "~~/components/inputs/InputNumber.vue";
 import InputSingleSelect from "~~/components/inputs/InputSingleSelect.vue";
